@@ -30,9 +30,9 @@ jobs:
 
     - name: Install Xvfb (Virtual Display)
       run: |
-        - sudo apt-get install -y x11-xserver-utils 
-        - Xvfb :99 -screen 0 1920x1080x24 &  
-        - export DISPLAY=:99.0  
+        sudo apt-get install -y x11-xserver-utils 
+        Xvfb :99 -screen 0 1920x1080x24 &  
+        export DISPLAY=:99.0  
 
 
     - name: Run Resume Update Script with Virtual Display
