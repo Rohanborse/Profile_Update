@@ -13,7 +13,7 @@ import time
 EMAIL = os.getenv("NAUKRI_EMAIL")
 PASSWORD = os.getenv("NAUKRI_PASSWORD")
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
-RESUME_PATH = "C:\\Users\\rohan\\Downloads\\Rohan_Borse.pdf"
+
 
 SENDER_EMAIL = "borserohan5308@gmail.com"  # Replace with your verified SendGrid email
 RECEIVER_EMAIL = "rborse1213@gmail.com"
