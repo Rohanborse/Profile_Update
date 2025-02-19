@@ -2,7 +2,7 @@ name: Update Resume on Naukri
 
 on:
   schedule:
-    - cron: "0 0 * * 1"  # Runs every Monday at midnight UTC
+    - cron: "0 4 * * *"  # Runs every day at 9:30 AM IST
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
