@@ -4,7 +4,6 @@ on:
   schedule:
     - cron: "37 6 * * *"  # Runs daily at 12:07 PM IST (6:37 AM UTC)
   workflow_dispatch:
-:
 
 jobs:
   update-resume:
