@@ -10,11 +10,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 
-EMAIL = "rborse1213@gmail.com"
-PASSWORD = "Rohan@1213"
+EMAIL = os.getenv("NAUKRI_EMAIL")
+PASSWORD = os.getenv("NAUKRI_PASSWORD")
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 RESUME_PATH = "C:\\Users\\rohan\\Downloads\\Rohan_Borse.pdf"
 
-SENDGRID_API_KEY = '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'  # Replace with your SendGrid API Key
 SENDER_EMAIL = "borserohan5308@gmail.com"  # Replace with your verified SendGrid email
 RECEIVER_EMAIL = "rborse1213@gmail.com"
 
