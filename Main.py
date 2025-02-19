@@ -9,6 +9,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import time
+import os
+import requests
 
 EMAIL = os.getenv("NAUKRI_EMAIL")
 PASSWORD = os.getenv("NAUKRI_PASSWORD")
@@ -17,9 +19,6 @@ SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
 SENDER_EMAIL = "borserohan5308@gmail.com"  # Replace with your verified SendGrid email
 RECEIVER_EMAIL = "rborse1213@gmail.com"
-
-import os
-import requests
 
 def download_resume():
     """Download the resume from Google Drive and save it locally."""
