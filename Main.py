@@ -17,7 +17,7 @@ PASSWORD = os.getenv("NAUKRI_PASSWORD")
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
 
-SENDER_EMAIL = "borserohan5308@gmail.com"  # Replace with your verified SendGrid email
+SENDER_EMAIL = "updatenaukari1@gmail.com"  # Replace with your verified SendGrid email
 RECEIVER_EMAIL = "rborse1213@gmail.com"
 
 def download_resume():
