@@ -32,7 +32,7 @@ jobs:
       run: |
         sudo pkill Xvfb || true  # Kill any existing Xvfb process
         rm -f /tmp/.X99-lock      
-        Xvfb :99 -screen 0 1920x1080x24 &  
+        Xvfb :99 -screen 0 1920x1080x24 -nolisten tcp -noreset +extension GLX &> /dev/null &
         export DISPLAY=:99.0  
   
 
