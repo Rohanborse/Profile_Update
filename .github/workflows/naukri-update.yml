@@ -35,4 +35,4 @@ jobs:
         NAUKRI_EMAIL: ${{ secrets.NAUKRI_EMAIL }}
         NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
         SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-      run: python update_resume.py
+      run: python Main.py
