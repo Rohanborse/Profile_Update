@@ -1,0 +1,38 @@
+name: Update Resume on Naukri
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"  # Runs every Monday at midnight UTC
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  update-resume:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install Dependencies
+      run: |
+        pip install selenium sendgrid webdriver-manager
+
+    - name: Download Chrome
+      run: |
+        sudo apt update
+        sudo apt install -y wget unzip
+        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo apt install -y ./google-chrome-stable_current_amd64.deb
+        rm google-chrome-stable_current_amd64.deb
+
+    - name: Run Resume Update Script
+      env:
+        NAUKRI_EMAIL: ${{ secrets.NAUKRI_EMAIL }}
+        NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+      run: python update_resume.py
