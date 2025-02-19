@@ -16,12 +16,10 @@ EMAIL = os.getenv("NAUKRI_EMAIL")
 PASSWORD = os.getenv("NAUKRI_PASSWORD")
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
-
-SENDER_EMAIL = "updatenaukari1@gmail.com"  # Replace with your verified SendGrid email
+SENDER_EMAIL = "updatenaukari1@gmail.com"  
 RECEIVER_EMAIL = "rborse1213@gmail.com"
 
 def download_resume():
-    """Download the resume from Google Drive and save it locally."""
     file_url = "https://drive.google.com/uc?id=19XpvXDI5-mjfyy8WSLmsaaZXq-peO83H&export=download"
     local_path = "Rohan_Borse.pdf"
 
@@ -30,71 +28,47 @@ def download_resume():
         with open(local_path, "wb") as file:
             for chunk in response.iter_content(chunk_size=1024):
                 file.write(chunk)
-        print("Resume downloaded successfully!")
+        print("✅ Resume downloaded successfully!")
     else:
-        print("Failed to download resume.")
+        print("⛔ Failed to download resume.")
 
     return local_path
 
-
-def send_email_notification():
+def send_email_notification(success=True):
+    """Send email notification based on resume update success or failure."""
     try:
         sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
-
-        # Create email content
         from_email = Email(SENDER_EMAIL)
         to_email = To(RECEIVER_EMAIL)
-        subject = "✅Resume Update🚀 Confirmation👍✅"
-        content = Content("text/plain", "Hello Rohan,\n\nYour resume has been successfully updated on Naukri.com. \n\nBest Regards,\nAno..")
 
-        # Prepare the mail object
-        mail = Mail(from_email, to_email, subject, content)
+        if success:
+            subject = "✅ Resume Update Confirmation 🚀"
+            content_text = "Hello Rohan,\n\nYour resume has been successfully updated on Naukri.com.\n\nBest Regards,\nAno.."
+        else:
+            subject = "⛔ Resume Update Failed"
+            content_text = "Hello Rohan,\n\nThere was an error updating your resume on Naukri.com.\n\nBest Regards,\nAno.."
 
-        # Send the email
+        mail = Mail(from_email, to_email, subject, Content("text/plain", content_text))
         response = sg.send(mail)
 
-        # Check the response status code
         if response.status_code == 202:
-            print("Email notification sent successfully!✅✅✅✅")
+            print(f"📧 Email notification sent successfully! ({subject})")
         else:
-            print(f"Failed to send email. Status Code: {response.status_code}")
+            print(f"⚠️ Failed to send email. Status Code: {response.status_code}")
 
     except Exception as e:
-        print(f"Failed to send email: {e}")
-
-def not_send_email_notification():
-    try:
-        sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
-
-        # Create email content
-        from_email = Email(SENDER_EMAIL)
-        to_email = To(RECEIVER_EMAIL)
-        subject = "⛔⛔⛔⛔Resume Update Error ⛔⛔⛔⛔"
-        content = Content("text/plain", "Hello Rohan,\n\nYour resume has not updated on Naukri.com. \n\nBest Regards,\nAno..")
-
-        # Prepare the mail object
-        mail = Mail(from_email, to_email, subject, content)
-
-        # Send the email
-        response = sg.send(mail)
-
-        # Check the response status code
-        if response.status_code == 202:
-            print("Email notification sent successfully!⛔⛔⛔")
-        else:
-            print(f"Failed to send email. Status Code: {response.status_code}")
-
-    except Exception as e:
-        print(f"Failed to send email: {e}")
+        print(f"❌ Email notification error: {e}")
 
 def update_profile_summary():
     RESUME_PATH = download_resume()
-    # Setup WebDriver with options
+
     chrome_options = Options()
-    chrome_options.add_argument("--start-maximized")
-    chrome_options.add_argument("--disable-popup-blocking")  # Prevent pop-ups from interfering
+    chrome_options.add_argument("--headless=new")  # Updated headless mode
     chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--remote-debugging-port=9222")
+    chrome_options.add_argument("--window-size=1920,1080")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")  # Bypass Selenium detection
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
 
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
@@ -103,47 +77,54 @@ def update_profile_summary():
         driver.get("https://www.naukri.com/")
         driver.maximize_window()
 
-        # Handle pop-ups (if any)
+        # Close pop-ups (if present)
         try:
             close_popup = WebDriverWait(driver, 5).until(
                 EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'✕')]"))
             )
             close_popup.click()
         except:
-            pass  # No pop-up found
+            print("✅ No pop-ups found.")
 
-            # Click on Login
-            login_button = driver.find_element(By.LINK_TEXT, "Login")
-            login_button.click()
-            time.sleep(3)
+        # Click Login
+        login_button = WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.LINK_TEXT, "Login"))
+        )
+        login_button.click()
+        time.sleep(3)
 
-            # Enter email
-            email_field = driver.find_element(By.XPATH, "//input[@type='text' and @maxlength='100']")
-            email_field.send_keys(EMAIL)
+        # Enter email
+        email_field = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//input[@type='text' and @maxlength='100']"))
+        )
+        email_field.send_keys(EMAIL)
 
-            # Enter password
-            password_field = driver.find_element(By.XPATH, "//input[@type='password' and @maxlength='40']")
-            password_field.send_keys(PASSWORD)
-            password_field.send_keys(Keys.RETURN)
-            time.sleep(5)
+        # Enter password
+        password_field = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//input[@type='password' and @maxlength='40']"))
+        )
+        password_field.send_keys(PASSWORD)
+        password_field.send_keys(Keys.RETURN)
+        time.sleep(5)
 
-            # Navigate to Profile Page
-            driver.get("https://www.naukri.com/mnjuser/profile")
-            time.sleep(5)
+        # Navigate to Profile Page
+        driver.get("https://www.naukri.com/mnjuser/profile")
+        time.sleep(5)
 
-        # Find "Attach CV" input and upload file
+        # Upload Resume
         upload_cv = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, "attachCV"))
         )
         upload_cv.send_keys(RESUME_PATH)  # Upload Resume
         time.sleep(3)
 
-        print("Resume updated successfully!")
-        send_email_notification()  # Send Email Notification
+        print("🎉 Resume updated successfully!")
+        send_email_notification(success=True)
 
     except Exception as e:
-        print(f"Error: {e}")
-        not_send_email_notification()
+        print(f"❌ Error: {e}")
+        send_email_notification(success=False)
+
     finally:
         driver.quit()
 
