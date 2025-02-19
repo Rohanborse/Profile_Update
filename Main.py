@@ -18,6 +18,25 @@ RESUME_PATH = "C:\\Users\\rohan\\Downloads\\Rohan_Borse.pdf"
 SENDER_EMAIL = "borserohan5308@gmail.com"  # Replace with your verified SendGrid email
 RECEIVER_EMAIL = "rborse1213@gmail.com"
 
+import os
+import requests
+
+def download_resume():
+    """Download the resume from Google Drive and save it locally."""
+    file_url = "https://drive.google.com/uc?id=19XpvXDI5-mjfyy8WSLmsaaZXq-peO83H&export=download"
+    local_path = "Rohan_Borse.pdf"
+
+    response = requests.get(file_url, stream=True)
+    if response.status_code == 200:
+        with open(local_path, "wb") as file:
+            for chunk in response.iter_content(chunk_size=1024):
+                file.write(chunk)
+        print("Resume downloaded successfully!")
+    else:
+        print("Failed to download resume.")
+
+    return local_path
+
 
 def send_email_notification():
     try:
@@ -70,6 +89,7 @@ def not_send_email_notification():
         print(f"Failed to send email: {e}")
 
 def update_profile_summary():
+    RESUME_PATH = download_resume()
     # Setup WebDriver with options
     chrome_options = Options()
     chrome_options.add_argument("--start-maximized")
