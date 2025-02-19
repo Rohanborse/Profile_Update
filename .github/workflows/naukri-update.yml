@@ -2,8 +2,8 @@ name: Update Resume on Naukri
 
 on:
   schedule:
-    - cron: "7 6 * * *"  # Runs every day at 11:37 AM IST
-  workflow_dispatch:  
+    - cron: "30 6 * * *"  # Runs daily at 12:00 PM IST (6:30 AM UTC)
+  workflow_dispatch:
 
 jobs:
   update-resume:
@@ -22,17 +22,22 @@ jobs:
       run: |
         pip install selenium sendgrid webdriver-manager
 
-    - name: Download Chrome
+    - name: Install Google Chrome
       run: |
         sudo apt update
-        sudo apt install -y wget unzip
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo apt install -y ./google-chrome-stable_current_amd64.deb
-        rm google-chrome-stable_current_amd64.deb
+        sudo apt install -y google-chrome-stable
+        google-chrome --version
 
-    - name: Run Resume Update Script
+    - name: Install Xvfb (Virtual Display)
+      run: |
+        sudo apt install -y xvfb
+
+    - name: Run Resume Update Script with Virtual Display
       env:
         NAUKRI_EMAIL: ${{ secrets.NAUKRI_EMAIL }}
         NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
         SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-      run: python Main.py
+      run: |
+        Xvfb :99 -screen 0 1920x1080x24 &  # Start virtual display
+        export DISPLAY=:99                 # Set display for GUI apps
+        python Main.py                      # Run your script
